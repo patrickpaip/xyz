@@ -64,3 +64,37 @@ file.close()
 file=open("me.txt","w")
 file.write("Hello World")
 file.close()
+
+
+#################################
+import json
+temp=[]   # Temp storage for processed data
+file=open("hosts","r")
+for x in file:    # Read line by line which is memory efficient 
+	temp.append(x.split())    # split uses whitespace as default delimiter
+file.close()  # Closing the file makes sure there is no file descriptor overflow in OS
+print (temp)
+
+outcome1=[]   # Create a tempe
+for url,ip in temp:    # Uses Unpacking technique to make it more readable.
+	dict_a={
+		"url" : url,
+		"ip" : ip
+		}
+	outcome1.append(dict_a)
+file=open("outcome1.json","w")   # Open in write mode #Note: File gets truncated
+file.write(json.dumps(outcome1,indent=4))  
+file.close()
+
+outcome2=list(temp)
+outcome2.insert(0,["url","ip"])
+file=open("outcome2.json","w")
+file.write(json.dumps(outcome2,indent=4))
+file.close()
+
+outcome3={}   # Temp structure for output.
+for url,ip in temp:   
+	outcome3[url]=ip   # If a value is assigned to a key which is not present, keyvalue pair gets added
+file=open("outcome3.json","w")
+file.write(json.dumps(outcome3,indent=4))
+file.close()
