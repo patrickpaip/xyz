@@ -41,3 +41,26 @@ data=file.readlines()
 ---->
 str.split or str.partition
 '''
+
+
+file=open("sample.me","r")
+print (file.read())
+file.close()
+
+file=open("sample.me","r")
+for x in file:
+	print ("LINE: {}".format(x))
+file.close()
+
+import json
+file=open("batman.json","r")
+data=file.read()
+converted=json.loads(data)
+print (converted)
+print (converted["name"])
+file.close()
+
+
+file=open("me.txt","w")
+file.write("Hello World")
+file.close()
