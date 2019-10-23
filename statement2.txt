@@ -1,0 +1,63 @@
+
+'''
+Read the set of urls from the config.json
+
+{
+	"interval" : 2,
+	"urls" : [
+           {
+	             "projectID" : "1000",
+	             "url" : "http://www.google.com"
+           },
+             {
+	             "projectID" : "1001",
+	             "url" : "http://www.facebook.com"
+           }
+	]
+}
+
+ERRORTYPE
+-> Status Code Error -> Anything other than 200
+-> Accessibility Error -> Website is Done
+
+site.logs
+DATETIME [ProjectID] [ERRORTYPE] [USERNAME IN OS] [ERROR DESCRIPTION]
+DATETIME [ProjectID] [ERRORTYPE] [USERNAME IN OS] [ERROR DESCRIPTION]
+
+sitesummary.logs
+DATETIME No of Sites Scanned: {} Positive : {} Negative : {}
+
+'''
+
+from json import loads
+from time import sleep
+from datetime import datetime
+import requests
+with open("config.json") as file:
+	config=loads(file.read())
+
+def logsites(data):
+	with open("site.log","a") as file:
+		file.write(data+"\n")
+
+def logsummary(data):
+	with open("sitesummary.log","a") as file:
+		file.write(data+"\n")
+
+while(True):
+	totalSites=len(config["urls"])
+	failure=0
+	for x in config["urls"]:
+		try:
+			response=requests.get(x["url"])
+			print (response)
+			if(response.status_code!=200):
+				failure+=1
+				logsites("{} {} STATUSCODE STATUSCODE={}".format(datetime.now(),x["projectID"],response.status_code))
+		except Exception as e:
+			print (e)
+			failure+=1
+			logsites("{} {} ACCESSIBILITY SITE IS NOT ACCESSIBLE".format(datetime.now(),x["projectID"]))
+	logsummary("{} No of Sites Scanned:{} Positive : {} Negative : {}".format(datetime.now(),totalSites,totalSites-failure,failure))
+	print ("iteration in Progress")
+	sleep(config.get("interval",1)*60)
